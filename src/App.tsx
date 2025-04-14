@@ -10,6 +10,8 @@ import ProfitLossPage from "./pages/ProfitLossPage";
 import BalancePage from "./pages/BalancePage";
 import AssistantPage from "./pages/AssistantPage";
 import SettingsPage from "./pages/SettingsPage";
+import UnitEconomicsPage from "./pages/UnitEconomicsPage";
+import ForecastsPage from "./pages/ForecastsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +28,8 @@ const App = () => (
           <Route path="/profit-loss" element={<ProfitLossPage />} />
           <Route path="/balance" element={<BalancePage />} />
           <Route path="/assistant" element={<AssistantPage />} />
+          <Route path="/unit-economics" element={<UnitEconomicsPage />} />
+          <Route path="/forecasts" element={<ForecastsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

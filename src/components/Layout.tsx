@@ -12,7 +12,9 @@ import {
   MessageSquare,
   Settings,
   Menu,
-  X
+  X,
+  Calculator,
+  TrendingUp
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -42,6 +44,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: "Движение денежных средств", icon: Wallet, path: "/cash-flow" },
     { name: "Прибыль и убытки", icon: BarChart3, path: "/profit-loss" },
     { name: "Баланс", icon: FileSpreadsheet, path: "/balance" },
+    { name: "Юнит-экономика", icon: Calculator, path: "/unit-economics" },
+    { name: "Прогнозы", icon: TrendingUp, path: "/forecasts" },
     { name: "Финансовый ассистент", icon: MessageSquare, path: "/assistant" },
   ];
 

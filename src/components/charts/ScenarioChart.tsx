@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   ResponsiveContainer,
@@ -28,7 +29,7 @@ interface ScenarioChartProps {
     pessimistic: string;
     base?: string;
   };
-  valueFormatter?: (value: number, currency?: 'ruble' | 'tenge') => string;
+  valueFormatter?: (value: number) => string;
   className?: string;
   type?: 'line' | 'area';
   currency?: 'ruble' | 'tenge';
@@ -38,10 +39,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
   title,
   data,
   dataKeys,
-  valueFormatter = (value, currency = 'tenge') => 
-    currency === 'tenge' 
-      ? `₸${value.toLocaleString()}` 
-      : `₽${value.toLocaleString()}`,
+  valueFormatter = (value) => `₸${value.toLocaleString()}`,
   className,
   type = 'line',
   currency = 'tenge'
@@ -77,6 +75,14 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
     },
   };
 
+  // Custom formatter to handle both chart needs and display formatting
+  const formatTickValue = (value: any) => valueFormatter(Number(value));
+  
+  // Custom content formatter for tooltip that ensures correct value display
+  const formatTooltipValue = (value: any) => {
+    return valueFormatter(Number(value));
+  };
+
   return (
     <Card className={cn("w-full", className)}>
       <CardHeader>
@@ -102,7 +108,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={valueFormatter}
+                tickFormatter={formatTickValue}
               />
               <ChartTooltip 
                 content={({ active, payload }) => {
@@ -111,7 +117,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
                       <ChartTooltipContent 
                         active={active} 
                         payload={payload}
-                        formatter={(value) => valueFormatter(value as number, currency)}
+                        formatter={formatTooltipValue}
                       />
                     );
                   }
@@ -175,7 +181,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={valueFormatter}
+                tickFormatter={formatTickValue}
               />
               <ChartTooltip 
                 content={({ active, payload }) => {
@@ -184,7 +190,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
                       <ChartTooltipContent 
                         active={active} 
                         payload={payload}
-                        formatter={(value) => valueFormatter(value as number, currency)}
+                        formatter={formatTooltipValue}
                       />
                     );
                   }
