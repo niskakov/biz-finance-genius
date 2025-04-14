@@ -1,8 +1,8 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
 import UnitEconomicsTable from '@/components/tables/UnitEconomicsTable';
 import ScenarioChart from '@/components/charts/ScenarioChart';
+import ScenarioTable from '@/components/tables/ScenarioTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const unitEconomicsData = [
