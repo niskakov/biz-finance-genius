@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { FileUpload } from '@/components/FileUpload';
@@ -46,6 +45,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ScenarioChart from '@/components/charts/ScenarioChart';
+
+const formatCurrency = (value: number) => `₸${value.toLocaleString()}`;
 
 // Базовые данные (из существующего кода)
 const sampleCashFlow = [
@@ -253,7 +254,7 @@ const Index: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground mb-1">Текущий баланс</p>
-                  <h3 className="text-2xl font-bold">₽1,200,000</h3>
+                  <h3 className="text-2xl font-bold">₸1,200,000</h3>
                 </div>
                 <div className="p-2 bg-green-100 rounded-full">
                   <Wallet className="h-6 w-6 text-green-600" />
@@ -271,7 +272,7 @@ const Index: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground mb-1">Чистая прибыль</p>
-                  <h3 className="text-2xl font-bold">₽150,000</h3>
+                  <h3 className="text-2xl font-bold">₸150,000</h3>
                 </div>
                 <div className="p-2 bg-blue-100 rounded-full">
                   <BarChart3 className="h-6 w-6 text-blue-600" />
@@ -318,7 +319,7 @@ const Index: React.FC = () => {
               </li>
               <li className="flex">
                 <AlertCircle className="h-5 w-5 mr-2 text-yellow-600 flex-shrink-0 mt-0.5" />
-                <span>Возможен кассовый разрыв в следующем месяце из-за запланированных крупных расходов. Рекомендуем отложить ₽200,000 для предотвращения проблем с ликвидностью.</span>
+                <span>Возможен кассовый разрыв в следующем месяце из-за запланированных крупных расходов. Рекомендуем отложить ₸200,000 для предотвращения проблем с ликвидностью.</span>
               </li>
               <li className="flex">
                 <TrendingDown className="h-5 w-5 mr-2 text-red-600 flex-shrink-0 mt-0.5" />
@@ -346,6 +347,8 @@ const Index: React.FC = () => {
                     pessimistic: 'пессимистичный'
                   }} 
                   type="area"
+                  currency="tenge"
+                  valueFormatter={(value) => `₸${value.toLocaleString()}`}
                 />
                 
                 <ScenarioChart 
@@ -357,6 +360,8 @@ const Index: React.FC = () => {
                     optimistic: 'оптимистичный',
                     pessimistic: 'пессимистичный'
                   }}
+                  currency="tenge"
+                  valueFormatter={(value) => `₸${value.toLocaleString()}`}
                 />
                 
                 <Card>
@@ -372,7 +377,7 @@ const Index: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis domain={['dataMin - 200000', 'dataMax + 200000']} />
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                         <Line
                           type="monotone"
@@ -428,7 +433,7 @@ const Index: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis domain={['dataMin - 100000', 'dataMax + 100000']} />
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                         <Line
                           type="monotone"
@@ -483,7 +488,7 @@ const Index: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                         <Bar dataKey="доходы" fill="#34a853" />
                         <Bar dataKey="расходы" fill="#ea4335" />
@@ -502,7 +507,7 @@ const Index: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                         <Line type="monotone" dataKey="прибыль" stroke="#1a73e8" strokeWidth={2} />
                       </LineChart>
@@ -531,7 +536,7 @@ const Index: React.FC = () => {
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -548,7 +553,7 @@ const Index: React.FC = () => {
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
-                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                         <Legend />
                         <Area type="monotone" dataKey="доходы" stackId="1" stroke="#1a73e8" fill="#1a73e8" fillOpacity={0.3} />
                         <Area type="monotone" dataKey="расходы" stackId="1" stroke="#ea4335" fill="#ea4335" fillOpacity={0.3} />
@@ -581,7 +586,7 @@ const Index: React.FC = () => {
                       <TableRow key={index}>
                         <TableCell>{item.category}</TableCell>
                         <TableCell className={item.amount < 0 ? "text-red-600" : "text-green-600"}>
-                          ₽{item.amount.toLocaleString()}
+                          ₸{item.amount.toLocaleString()}
                         </TableCell>
                         <TableCell className={item.change < 0 ? "text-red-600" : "text-green-600"}>
                           {item.change > 0 ? "+" : ""}{item.change}%
@@ -614,16 +619,16 @@ const Index: React.FC = () => {
                     {yearlyPlanningData.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell>{item.month}</TableCell>
-                        <TableCell>{item.доходы ? `₽${item.доходы.toLocaleString()}` : "-"}</TableCell>
-                        <TableCell>₽{item.прогноз_доходы.toLocaleString()}</TableCell>
-                        <TableCell>{item.расходы ? `₽${item.расходы.toLocaleString()}` : "-"}</TableCell>
-                        <TableCell>₽{item.прогноз_расходы.toLocaleString()}</TableCell>
+                        <TableCell>{item.доходы ? `₸${item.доходы.toLocaleString()}` : "-"}</TableCell>
+                        <TableCell>₸{item.прогноз_доходы.toLocaleString()}</TableCell>
+                        <TableCell>{item.расходы ? `₸${item.расходы.toLocaleString()}` : "-"}</TableCell>
+                        <TableCell>₸{item.прогноз_расходы.toLocaleString()}</TableCell>
                         <TableCell>
                           {item.доходы && item.расходы 
-                            ? `₽${(item.доходы - item.расходы).toLocaleString()}` 
+                            ? `₸${(item.доходы - item.расходы).toLocaleString()}` 
                             : "-"}
                         </TableCell>
-                        <TableCell>₽{(item.прогноз_доходы - item.прогноз_расходы).toLocaleString()}</TableCell>
+                        <TableCell>₸{(item.прогноз_доходы - item.прогноз_расходы).toLocaleString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -649,9 +654,9 @@ const Index: React.FC = () => {
                     {projectedBalanceData.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell>{item.month}</TableCell>
-                        <TableCell>₽{item.активы.toLocaleString()}</TableCell>
-                        <TableCell>₽{item.обязательства.toLocaleString()}</TableCell>
-                        <TableCell>₽{item.капитал.toLocaleString()}</TableCell>
+                        <TableCell>₸{item.активы.toLocaleString()}</TableCell>
+                        <TableCell>₸{item.обязательства.toLocaleString()}</TableCell>
+                        <TableCell>₸{item.капитал.toLocaleString()}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

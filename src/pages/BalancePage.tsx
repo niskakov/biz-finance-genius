@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +16,6 @@ import {
   Cell,
 } from 'recharts';
 
-// Sample data
 const balanceSummary = [
   { name: 'Активы', value: 4500000 },
   { name: 'Обязательства', value: 1800000 },
@@ -79,13 +77,15 @@ const BalancePage: React.FC = () => {
                 fill="#8884d8"
                 paddingAngle={5}
                 dataKey="value"
-                label={({ name, value, percent }) => `${name}: ${(percent * 100).toFixed(0)}% (₽${(value/1000000).toFixed(1)}M)`}
+                label={({ name, value, percent }) => 
+                  `${name}: ${(percent * 100).toFixed(0)}% (₸${(value/1000000).toFixed(1)}M)`
+                }
               >
                 {balanceSummary.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+              <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>
@@ -105,7 +105,7 @@ const BalancePage: React.FC = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+              <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
               <Legend />
               <Bar dataKey="активы" fill="#0088FE" name="Активы" />
               <Bar dataKey="обязательства" fill="#00C49F" name="Обязательства" />
@@ -131,7 +131,7 @@ const BalancePage: React.FC = () => {
                   <div className="flex-1 flex justify-between items-center">
                     <span className="font-medium">{item.name}</span>
                     <div className="text-right">
-                      <div className="font-medium">₽{item.value.toLocaleString()}</div>
+                      <div className="font-medium">₸{item.value.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground">
                         {((item.value / balanceSummary[0].value) * 100).toFixed(1)}%
                       </div>
@@ -158,7 +158,7 @@ const BalancePage: React.FC = () => {
                   <div className="flex-1 flex justify-between items-center">
                     <span className="font-medium">{item.name}</span>
                     <div className="text-right">
-                      <div className="font-medium">₽{item.value.toLocaleString()}</div>
+                      <div className="font-medium">₸{item.value.toLocaleString()}</div>
                       <div className="text-xs text-muted-foreground">
                         {((item.value / balanceSummary[1].value) * 100).toFixed(1)}%
                       </div>
