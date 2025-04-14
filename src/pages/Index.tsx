@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { FileUpload } from '@/components/FileUpload';
@@ -16,7 +15,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Table as TableIcon,
-  BookOpen
+  BookOpen,
+  CalendarClock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -32,7 +32,9 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Area,
+  AreaChart
 } from 'recharts';
 import {
   Table,
@@ -43,7 +45,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Sample data for demonstration purposes
 const sampleCashFlow = [
   { month: 'Янв', доходы: 500000, расходы: 430000 },
   { month: 'Фев', доходы: 650000, расходы: 520000 },
@@ -62,7 +63,6 @@ const sampleProfitLoss = [
   { month: 'Июн', прибыль: 150000 },
 ];
 
-// Sample data for balance sheet
 const balanceSummary = [
   { name: 'Активы', value: 4500000 },
   { name: 'Обязательства', value: 1800000 },
@@ -71,7 +71,6 @@ const balanceSummary = [
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
 
-// Sample data for detailed tables
 const cashDetails = [
   { category: 'Продажи товаров', amount: 450000, change: 5.2 },
   { category: 'Услуги', amount: 280000, change: 12.4 },
@@ -81,6 +80,51 @@ const cashDetails = [
   { category: 'Маркетинг', amount: -65000, change: 8.3 },
   { category: 'Коммунальные услуги', amount: -40000, change: 2.1 },
   { category: 'Налоги', amount: -85000, change: 0 },
+];
+
+const yearlyPlanningData = [
+  { month: 'Янв', доходы: 500000, расходы: 430000, прогноз_доходы: 525000, прогноз_расходы: 440000 },
+  { month: 'Фев', доходы: 650000, расходы: 520000, прогноз_доходы: 680000, прогноз_расходы: 530000 },
+  { month: 'Мар', доходы: 620000, расходы: 610000, прогноз_доходы: 650000, прогноз_расходы: 615000 },
+  { month: 'Апр', доходы: 700000, расходы: 550000, прогноз_доходы: 720000, прогноз_расходы: 560000 },
+  { month: 'Май', доходы: 680000, расходы: 570000, прогноз_доходы: 710000, прогноз_расходы: 580000 },
+  { month: 'Июн', доходы: 750000, расходы: 600000, прогноз_доходы: 780000, прогноз_расходы: 610000 },
+  { month: 'Июл', доходы: null, расходы: null, прогноз_доходы: 800000, прогноз_расходы: 630000 },
+  { month: 'Авг', доходы: null, расходы: null, прогноз_доходы: 820000, прогноз_расходы: 640000 },
+  { month: 'Сен', доходы: null, расходы: null, прогноз_доходы: 850000, прогноз_расходы: 660000 },
+  { month: 'Окт', доходы: null, расходы: null, прогноз_доходы: 870000, прогноз_расходы: 670000 },
+  { month: 'Ноя', доходы: null, расходы: null, прогноз_доходы: 880000, прогноз_расходы: 680000 },
+  { month: 'Дек', доходы: null, расходы: null, прогноз_доходы: 900000, прогноз_расходы: 690000 },
+];
+
+const projectedBalanceData = [
+  { month: 'Янв', активы: 4500000, обязательства: 1800000, капитал: 2700000 },
+  { month: 'Фев', активы: 4600000, обязательства: 1790000, капитал: 2810000 },
+  { month: 'Мар', активы: 4700000, обязательства: 1780000, капитал: 2920000 },
+  { month: 'Апр', активы: 4800000, обязательства: 1770000, капитал: 3030000 },
+  { month: 'Май', активы: 4900000, обязательства: 1760000, капитал: 3140000 },
+  { month: 'Июн', активы: 5000000, обязательства: 1750000, капитал: 3250000 },
+  { month: 'Июл', активы: 5100000, обязательства: 1740000, капитал: 3360000 },
+  { month: 'Авг', активы: 5200000, обязательства: 1730000, капитал: 3470000 },
+  { month: 'Сен', активы: 5300000, обязательства: 1720000, капитал: 3580000 },
+  { month: 'Окт', активы: 5400000, обязательства: 1710000, капитал: 3690000 },
+  { month: 'Ноя', активы: 5500000, обязательства: 1700000, капитал: 3800000 },
+  { month: 'Дек', активы: 5600000, обязательства: 1690000, капитал: 3910000 },
+];
+
+const projectedProfitData = [
+  { month: 'Янв', прибыль: 70000, прогноз: 85000 },
+  { month: 'Фев', прибыль: 130000, прогноз: 150000 },
+  { month: 'Мар', прибыль: 10000, прогноз: 35000 },
+  { month: 'Апр', прибыль: 150000, прогноз: 160000 },
+  { month: 'Май', прибыль: 110000, прогноз: 130000 },
+  { month: 'Июн', прибыль: 150000, прогноз: 170000 },
+  { month: 'Июл', прибыль: null, прогноз: 170000 },
+  { month: 'Авг', прибыль: null, прогноз: 180000 },
+  { month: 'Сен', прибыль: null, прогноз: 190000 },
+  { month: 'Окт', прибыль: null, прогноз: 200000 },
+  { month: 'Ноя', прибыль: null, прогноз: 200000 },
+  { month: 'Дек', прибыль: null, прогноз: 210000 },
 ];
 
 const Index: React.FC = () => {
@@ -93,7 +137,6 @@ const Index: React.FC = () => {
   const handleFileUploaded = (file: File) => {
     setIsAnalyzing(true);
     
-    // Simulate file analysis (would be replaced with actual API call)
     setTimeout(() => {
       setIsAnalyzing(false);
       setShowDashboard(true);
@@ -104,12 +147,10 @@ const Index: React.FC = () => {
     }, 3000);
   };
 
-  // Calculate period totals for book format
   const calculateTotal = (data: any[], key: string) => {
     return data.reduce((sum, item) => sum + item[key], 0);
   };
 
-  // Dashboard view after file has been processed
   if (showDashboard) {
     return (
       <Layout>
@@ -138,7 +179,6 @@ const Index: React.FC = () => {
           </div>
         </div>
 
-        {/* Financial Health Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
@@ -195,7 +235,6 @@ const Index: React.FC = () => {
           </Card>
         </div>
 
-        {/* AI Insights */}
         <Card className="mb-8 border-l-4 border-l-primary">
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -225,12 +264,12 @@ const Index: React.FC = () => {
         </Card>
 
         {viewMode === 'chart' ? (
-          /* Charts Dashboard View */
           <Tabs defaultValue="cash-flow" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="cash-flow">Движение денежных средств</TabsTrigger>
               <TabsTrigger value="profit-loss">Прибыль и убытки</TabsTrigger>
               <TabsTrigger value="balance">Баланс</TabsTrigger>
+              <TabsTrigger value="planning">Годовое планирование</TabsTrigger>
             </TabsList>
             
             <TabsContent value="cash-flow" className="pt-4">
@@ -317,14 +356,159 @@ const Index: React.FC = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            <TabsContent value="planning" className="pt-4">
+              <div className="grid grid-cols-1 gap-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle>Планирование доходов и расходов на год</CardTitle>
+                    <CalendarClock className="h-5 w-5 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent className="h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={yearlyPlanningData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Legend />
+                        <Area 
+                          type="monotone" 
+                          dataKey="доходы" 
+                          name="Факт доходы" 
+                          fill="#34a853" 
+                          stroke="#34a853" 
+                          fillOpacity={0.3} 
+                          activeDot={{ r: 8 }} 
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="расходы" 
+                          name="Факт расходы" 
+                          fill="#ea4335" 
+                          stroke="#ea4335" 
+                          fillOpacity={0.3} 
+                          activeDot={{ r: 8 }} 
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="прогноз_доходы" 
+                          name="Прогноз доходы" 
+                          fill="#34a853" 
+                          stroke="#34a853" 
+                          fillOpacity={0.1} 
+                          strokeDasharray="5 5" 
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="прогноз_расходы" 
+                          name="Прогноз расходы" 
+                          fill="#ea4335" 
+                          stroke="#ea4335" 
+                          fillOpacity={0.1} 
+                          strokeDasharray="5 5" 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Прогноз прибыли на год</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={projectedProfitData}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="прибыль"
+                            name="Факт прибыль"
+                            stroke="#1a73e8"
+                            strokeWidth={2}
+                            dot={{ r: 4 }}
+                            activeDot={{ r: 8 }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="прогноз"
+                            name="Прогноз прибыли"
+                            stroke="#1a73e8"
+                            strokeWidth={2}
+                            strokeDasharray="5 5"
+                            dot={{ r: 4 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Прогноз структуры баланса</CardTitle>
+                    </CardHeader>
+                    <CardContent className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={projectedBalanceData}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                          <Legend />
+                          <Line
+                            type="monotone"
+                            dataKey="активы"
+                            name="Активы"
+                            stroke="#0088FE"
+                            strokeWidth={2}
+                            dot={{ r: 3 }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="обязательства"
+                            name="Обязательства"
+                            stroke="#00C49F"
+                            strokeWidth={2}
+                            dot={{ r: 3 }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="капитал"
+                            name="Собственный капитал"
+                            stroke="#FFBB28"
+                            strokeWidth={2}
+                            dot={{ r: 3 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
         ) : (
-          /* Tables Dashboard View */
           <Tabs defaultValue="cash-flow-table" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="cash-flow-table">ДДС</TabsTrigger>
               <TabsTrigger value="profit-loss-table">ОПиУ</TabsTrigger>
               <TabsTrigger value="balance-table">Баланс</TabsTrigger>
+              <TabsTrigger value="planning-table">Планирование</TabsTrigger>
             </TabsList>
             
             <TabsContent value="cash-flow-table" className="pt-4">
@@ -591,13 +775,142 @@ const Index: React.FC = () => {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            <TabsContent value="planning-table" className="pt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Годовое планирование денежных потоков</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="border rounded-md overflow-x-auto">
+                    <Table>
+                      <TableHeader className="bg-muted">
+                        <TableRow>
+                          <TableHead className="w-[100px]">Месяц</TableHead>
+                          <TableHead className="text-right">Факт доходы</TableHead>
+                          <TableHead className="text-right">Прогноз доходы</TableHead>
+                          <TableHead className="text-right">Факт расходы</TableHead>
+                          <TableHead className="text-right">Прогноз расходы</TableHead>
+                          <TableHead className="text-right">Прогноз прибыль</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {yearlyPlanningData.map((item, index) => (
+                          <TableRow key={index} className={item.доходы === null ? "bg-muted/20" : ""}>
+                            <TableCell className="font-medium">{item.month}</TableCell>
+                            <TableCell className="text-right">
+                              {item.доходы !== null ? `₽${item.доходы.toLocaleString()}` : "-"}
+                            </TableCell>
+                            <TableCell className="text-right text-green-600">
+                              ₽{item.прогноз_доходы.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              {item.расходы !== null ? `₽${item.расходы.toLocaleString()}` : "-"}
+                            </TableCell>
+                            <TableCell className="text-right text-red-600">
+                              ₽{item.прогноз_расходы.toLocaleString()}
+                            </TableCell>
+                            <TableCell 
+                              className={`text-right font-medium ${
+                                (item.прогноз_доходы - item.прогноз_расходы) >= 0 
+                                  ? "text-green-600" 
+                                  : "text-red-600"
+                              }`}
+                            >
+                              ₽{Math.abs(item.прогноз_доходы - item.прогноз_расходы).toLocaleString()}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        <TableRow className="bg-muted/50 font-bold">
+                          <TableCell>ИТОГО ГОД</TableCell>
+                          <TableCell className="text-right">
+                            ₽{yearlyPlanningData
+                              .filter(item => item.доходы !== null)
+                              .reduce((sum, item) => sum + item.доходы!, 0)
+                              .toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right text-green-600">
+                            ₽{yearlyPlanningData
+                              .reduce((sum, item) => sum + item.прогноз_доходы, 0)
+                              .toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ₽{yearlyPlanningData
+                              .filter(item => item.расходы !== null)
+                              .reduce((sum, item) => sum + item.расходы!, 0)
+                              .toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right text-red-600">
+                            ₽{yearlyPlanningData
+                              .reduce((sum, item) => sum + item.прогноз_расходы, 0)
+                              .toLocaleString()}
+                          </TableCell>
+                          <TableCell 
+                            className="text-right font-medium text-green-600"
+                          >
+                            ₽{Math.abs(
+                              yearlyPlanningData.reduce((sum, item) => sum + item.прогноз_доходы, 0) - 
+                              yearlyPlanningData.reduce((sum, item) => sum + item.прогноз_расходы, 0)
+                            ).toLocaleString()}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <h3 className="text-lg font-semibold mt-8 mb-4">Ключевые показатели годового планирования</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="border rounded-md p-4">
+                      <h4 className="font-medium mb-3">Рост бизнеса</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span>Прирост выручки за год</span>
+                          <span className="font-semibold text-green-600">+80%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Прирост прибыли за год</span>
+                          <span className="font-semibold text-green-600">+200%</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-md p-4">
+                      <h4 className="font-medium mb-3">Рентабельность</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span>Средняя по году</span>
+                          <span className="font-semibold">23.3%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>К концу года</span>
+                          <span className="font-semibold text-green-600">+5.6%</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-md p-4">
+                      <h4 className="font-medium mb-3">Финансовая устойчивость</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span>Коэффициент автономии</span>
+                          <span className="font-semibold">0.7</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>ROI</span>
+                          <span className="font-semibold text-green-600">26.4%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
           </Tabs>
         )}
       </Layout>
     );
   }
 
-  // File upload view
   return (
     <Layout>
       <div className="max-w-3xl mx-auto">
