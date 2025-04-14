@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { FileUpload } from '@/components/FileUpload';
@@ -469,3 +470,231 @@ const Index: React.FC = () => {
                     </ResponsiveContainer>
                   </CardContent>
                 </Card>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Движение денежных средств</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={sampleCashFlow}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Legend />
+                        <Bar dataKey="доходы" fill="#34a853" />
+                        <Bar dataKey="расходы" fill="#ea4335" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Прибыли и убытки</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={sampleProfitLoss}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Legend />
+                        <Line type="monotone" dataKey="прибыль" stroke="#1a73e8" strokeWidth={2} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Структура баланса</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px] flex justify-center items-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={balanceSummary}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {balanceSummary.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Годовое планирование</CardTitle>
+                  </CardHeader>
+                  <CardContent className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={yearlyPlanningData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="month" />
+                        <YAxis />
+                        <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                        <Legend />
+                        <Area type="monotone" dataKey="доходы" stackId="1" stroke="#1a73e8" fill="#1a73e8" fillOpacity={0.3} />
+                        <Area type="monotone" dataKey="расходы" stackId="1" stroke="#ea4335" fill="#ea4335" fillOpacity={0.3} />
+                        <Area type="monotone" dataKey="прогноз_доходы" stackId="2" stroke="#34a853" fill="#34a853" fillOpacity={0.1} strokeDasharray="5 5" />
+                        <Area type="monotone" dataKey="прогноз_расходы" stackId="2" stroke="#fbbc04" fill="#fbbc04" fillOpacity={0.1} strokeDasharray="5 5" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Детали движения денежных средств</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Категория</TableHead>
+                      <TableHead>Сумма</TableHead>
+                      <TableHead>Изменение</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {cashDetails.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.category}</TableCell>
+                        <TableCell className={item.amount < 0 ? "text-red-600" : "text-green-600"}>
+                          ₽{item.amount.toLocaleString()}
+                        </TableCell>
+                        <TableCell className={item.change < 0 ? "text-red-600" : "text-green-600"}>
+                          {item.change > 0 ? "+" : ""}{item.change}%
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Годовое планирование</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Месяц</TableHead>
+                      <TableHead>Доходы (факт)</TableHead>
+                      <TableHead>Доходы (прогноз)</TableHead>
+                      <TableHead>Расходы (факт)</TableHead>
+                      <TableHead>Расходы (прогноз)</TableHead>
+                      <TableHead>Прибыль (факт)</TableHead>
+                      <TableHead>Прибыль (прогноз)</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {yearlyPlanningData.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.month}</TableCell>
+                        <TableCell>{item.доходы ? `₽${item.доходы.toLocaleString()}` : "-"}</TableCell>
+                        <TableCell>₽{item.прогноз_доходы.toLocaleString()}</TableCell>
+                        <TableCell>{item.расходы ? `₽${item.расходы.toLocaleString()}` : "-"}</TableCell>
+                        <TableCell>₽{item.прогноз_расходы.toLocaleString()}</TableCell>
+                        <TableCell>
+                          {item.доходы && item.расходы 
+                            ? `₽${(item.доходы - item.расходы).toLocaleString()}` 
+                            : "-"}
+                        </TableCell>
+                        <TableCell>₽{(item.прогноз_доходы - item.прогноз_расходы).toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>Прогнозируемый баланс</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Месяц</TableHead>
+                      <TableHead>Активы</TableHead>
+                      <TableHead>Обязательства</TableHead>
+                      <TableHead>Собственный капитал</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {projectedBalanceData.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.month}</TableCell>
+                        <TableCell>₽{item.активы.toLocaleString()}</TableCell>
+                        <TableCell>₽{item.обязательства.toLocaleString()}</TableCell>
+                        <TableCell>₽{item.капитал.toLocaleString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="flex flex-col items-center justify-center min-h-[80vh]">
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <CardTitle className="text-center">Загрузите финансовые данные</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center">
+              {isAnalyzing ? (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-16 w-16 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                  <p className="text-lg font-medium">Анализируем ваши данные...</p>
+                  <p className="text-muted-foreground text-center">
+                    Наш ИИ изучает ваши финансовые показатели и готовит полный отчет
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <FileUpload onFileUploaded={handleFileUploaded} />
+                  <p className="text-sm text-muted-foreground mt-6 text-center">
+                    Загрузите файл Excel с вашими финансовыми данными для анализа и создания детальных прогнозов
+                  </p>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </Layout>
+  );
+};
+
+export default Index;
