@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +16,10 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Filter } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 // Sample data
 const monthlyProfitLoss = [
@@ -52,10 +55,74 @@ const financialMetrics = [
 ];
 
 const ProfitLossPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('chart');
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [selectedDataPoints, setSelectedDataPoints] = useState(['выручка', 'чистая_прибыль']);
+  
+  // Filter data based on period
+  const filteredData = React.useMemo(() => {
+    if (selectedPeriod === 'all') return monthlyProfitLoss;
+    if (selectedPeriod === 'q1') return monthlyProfitLoss.slice(0, 3);
+    if (selectedPeriod === 'q2') return monthlyProfitLoss.slice(3, 6);
+    return monthlyProfitLoss;
+  }, [selectedPeriod]);
+  
+  // Track metrics totals
+  const totals = React.useMemo(() => {
+    return filteredData.reduce((acc, current) => ({
+      revenue: (acc.revenue || 0) + current.выручка,
+      profit: (acc.profit || 0) + current.чистая_прибыль,
+    }), { revenue: 0, profit: 0 });
+  }, [filteredData]);
+
   return (
     <Layout>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Прибыль и убытки</h1>
+        <div className="flex items-center gap-3">
+          <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Период" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Все месяцы</SelectItem>
+              <SelectItem value="q1">Q1 (Янв-Мар)</SelectItem>
+              <SelectItem value="q2">Q2 (Апр-Июн)</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                <span>Фильтры</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-4">
+                <h4 className="font-medium">Показатели для отображения</h4>
+                <div className="flex flex-wrap gap-2">
+                  {['выручка', 'себестоимость', 'валовая_прибыль', 'расходы', 'чистая_прибыль'].map(item => (
+                    <Button 
+                      key={item}
+                      variant={selectedDataPoints.includes(item) ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setSelectedDataPoints(prev => 
+                          prev.includes(item) 
+                            ? prev.filter(i => i !== item) 
+                            : [...prev, item]
+                        )
+                      }}
+                    >
+                      {item}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -86,43 +153,159 @@ const ProfitLossPage: React.FC = () => {
         ))}
       </div>
 
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Динамика прибыли и убытков</CardTitle>
-        </CardHeader>
-        <CardContent className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={monthlyProfitLoss}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="выручка"
-                stroke="#1a73e8"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="валовая_прибыль"
-                stroke="#34a853"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="чистая_прибыль"
-                stroke="#fbbc05"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList className="mb-4">
+          <TabsTrigger value="chart">График</TabsTrigger>
+          <TabsTrigger value="table">Таблица</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="chart">
+          <Card>
+            <CardHeader>
+              <CardTitle>Динамика прибыли и убытков</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={filteredData}
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                  <Legend />
+                  {selectedDataPoints.includes('выручка') && (
+                    <Line
+                      type="monotone"
+                      dataKey="выручка"
+                      name="Выручка"
+                      stroke="#1a73e8"
+                      strokeWidth={2}
+                    />
+                  )}
+                  {selectedDataPoints.includes('валовая_прибыль') && (
+                    <Line
+                      type="monotone"
+                      dataKey="валовая_прибыль"
+                      name="Валовая прибыль"
+                      stroke="#34a853"
+                      strokeWidth={2}
+                    />
+                  )}
+                  {selectedDataPoints.includes('чистая_прибыль') && (
+                    <Line
+                      type="monotone"
+                      dataKey="чистая_прибыль"
+                      name="Чистая прибыль"
+                      stroke="#fbbc05"
+                      strokeWidth={2}
+                    />
+                  )}
+                  {selectedDataPoints.includes('себестоимость') && (
+                    <Line
+                      type="monotone"
+                      dataKey="себестоимость"
+                      name="Себестоимость"
+                      stroke="#ea4335"
+                      strokeWidth={2}
+                    />
+                  )}
+                  {selectedDataPoints.includes('расходы') && (
+                    <Line
+                      type="monotone"
+                      dataKey="расходы"
+                      name="Расходы"
+                      stroke="#ff6d01"
+                      strokeWidth={2}
+                    />
+                  )}
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="table">
+          <Card>
+            <CardHeader>
+              <CardTitle>Полный отчет о прибылях и убытках</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 font-medium">Статья</th>
+                      {filteredData.map((month, i) => (
+                        <th key={i} className="text-right py-3 px-4 font-medium">{month.month}</th>
+                      ))}
+                      <th className="text-right py-3 px-4 font-medium bg-muted/30">Итого</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b">
+                      <td className="py-3 px-4 font-medium">Выручка</td>
+                      {filteredData.map((month, i) => (
+                        <td key={i} className="text-right py-3 px-4">
+                          ₽{month.выручка.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="text-right py-3 px-4 font-medium bg-muted/30">
+                        ₽{totals.revenue.toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr className="border-b bg-muted/30">
+                      <td className="py-3 px-4 font-medium">Себестоимость</td>
+                      {filteredData.map((month, i) => (
+                        <td key={i} className="text-right py-3 px-4 text-red-600">
+                          -₽{month.себестоимость.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="text-right py-3 px-4 font-medium bg-muted/30 text-red-600">
+                        -₽{filteredData.reduce((sum, month) => sum + month.себестоимость, 0).toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr className="border-b font-medium">
+                      <td className="py-3 px-4">Валовая прибыль</td>
+                      {filteredData.map((month, i) => (
+                        <td key={i} className="text-right py-3 px-4 text-green-600">
+                          ₽{month.валовая_прибыль.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="text-right py-3 px-4 font-medium bg-muted/30 text-green-600">
+                        ₽{filteredData.reduce((sum, month) => sum + month.валовая_прибыль, 0).toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr className="border-b bg-muted/30">
+                      <td className="py-3 px-4 font-medium">Операционные расходы</td>
+                      {filteredData.map((month, i) => (
+                        <td key={i} className="text-right py-3 px-4 text-red-600">
+                          -₽{month.расходы.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="text-right py-3 px-4 font-medium bg-muted/30 text-red-600">
+                        -₽{filteredData.reduce((sum, month) => sum + month.расходы, 0).toLocaleString()}
+                      </td>
+                    </tr>
+                    <tr className="font-bold bg-primary/5">
+                      <td className="py-3 px-4">Чистая прибыль</td>
+                      {filteredData.map((month, i) => (
+                        <td key={i} className="text-right py-3 px-4 text-primary">
+                          ₽{month.чистая_прибыль.toLocaleString()}
+                        </td>
+                      ))}
+                      <td className="text-right py-3 px-4 font-medium bg-muted/30 text-primary">
+                        ₽{totals.profit.toLocaleString()}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <Card>
@@ -181,71 +364,6 @@ const ProfitLossPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Полный отчет о прибылях и убытках</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-medium">Статья</th>
-                  <th className="text-right py-3 px-4 font-medium">Янв</th>
-                  <th className="text-right py-3 px-4 font-medium">Фев</th>
-                  <th className="text-right py-3 px-4 font-medium">Мар</th>
-                  <th className="text-right py-3 px-4 font-medium">Апр</th>
-                  <th className="text-right py-3 px-4 font-medium">Май</th>
-                  <th className="text-right py-3 px-4 font-medium">Июн</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-3 px-4 font-medium">Выручка</td>
-                  {monthlyProfitLoss.map((month, i) => (
-                    <td key={i} className="text-right py-3 px-4">
-                      ₽{month.выручка.toLocaleString()}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b bg-muted/30">
-                  <td className="py-3 px-4 font-medium">Себестоимость</td>
-                  {monthlyProfitLoss.map((month, i) => (
-                    <td key={i} className="text-right py-3 px-4 text-red-600">
-                      -₽{month.себестоимость.toLocaleString()}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b font-medium">
-                  <td className="py-3 px-4">Валовая прибыль</td>
-                  {monthlyProfitLoss.map((month, i) => (
-                    <td key={i} className="text-right py-3 px-4 text-green-600">
-                      ₽{month.валовая_прибыль.toLocaleString()}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="border-b bg-muted/30">
-                  <td className="py-3 px-4 font-medium">Операционные расходы</td>
-                  {monthlyProfitLoss.map((month, i) => (
-                    <td key={i} className="text-right py-3 px-4 text-red-600">
-                      -₽{month.расходы.toLocaleString()}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="font-bold bg-primary/5">
-                  <td className="py-3 px-4">Чистая прибыль</td>
-                  {monthlyProfitLoss.map((month, i) => (
-                    <td key={i} className="text-right py-3 px-4 text-primary">
-                      ₽{month.чистая_прибыль.toLocaleString()}
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
     </Layout>
   );
 };
