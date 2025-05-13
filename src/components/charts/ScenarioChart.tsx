@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   ResponsiveContainer,
@@ -44,6 +43,7 @@ const ScenarioChart: React.FC<ScenarioChartProps> = ({
   type = 'line',
   currency = 'tenge'
 }) => {
+  
   const chartConfig = {
     actual: {
       label: 'Фактические данные',
