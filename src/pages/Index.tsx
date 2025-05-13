@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { FileUpload } from '@/components/FileUpload';
 import { Button } from '@/components/ui/button';
@@ -48,8 +49,8 @@ import ScenarioChart from '@/components/charts/ScenarioChart';
 
 const formatCurrency = (value: number) => `₸${value.toLocaleString()}`;
 
-// Базовые данные (из существующего кода)
-const sampleCashFlow = [
+// Initial data structures, but we'll reset them when new files are uploaded
+const initialCashFlow = [
   { month: 'Янв', доходы: 500000, расходы: 430000 },
   { month: 'Фев', доходы: 650000, расходы: 520000 },
   { month: 'Мар', доходы: 620000, расходы: 610000 },
@@ -58,7 +59,7 @@ const sampleCashFlow = [
   { month: 'Июн', доходы: 750000, расходы: 600000 },
 ];
 
-const sampleProfitLoss = [
+const initialProfitLoss = [
   { month: 'Янв', прибыль: 70000 },
   { month: 'Фев', прибыль: 130000 },
   { month: 'Мар', прибыль: 10000 },
@@ -67,14 +68,14 @@ const sampleProfitLoss = [
   { month: 'Июн', прибыль: 150000 },
 ];
 
-const balanceSummary = [
+const initialBalanceSummary = [
   { name: 'Активы', value: 4500000 },
   { name: 'Обязательства', value: 1800000 },
   { name: 'Собственный капитал', value: 2700000 },
 ];
 
-// Новые данные с прогнозами по разным сценариям
-const cashFlowScenarios = [
+// Functions to generate data will only be called when needed
+const generateCashFlowScenarios = () => [
   { month: 'Янв', факт: 70000, базовый: 70000, оптимистичный: 70000, пессимистичный: 70000 },
   { month: 'Фев', факт: 130000, базовый: 130000, оптимистичный: 130000, пессимистичный: 130000 },
   { month: 'Мар', факт: 10000, базовый: 10000, оптимистичный: 10000, пессимистичный: 10000 },
@@ -89,7 +90,7 @@ const cashFlowScenarios = [
   { month: 'Дек', факт: null, базовый: 210000, оптимистичный: 280000, пессимистичный: 190000 },
 ];
 
-const profitScenarios = [
+const generateProfitScenarios = () => [
   { month: 'Янв', факт: 70000, базовый: 70000, оптимистичный: 70000, пессимистичный: 70000 },
   { month: 'Фев', факт: 130000, базовый: 130000, оптимистичный: 130000, пессимистичный: 130000 },
   { month: 'Мар', факт: 10000, базовый: 10000, оптимистичный: 10000, пессимистичный: 10000 },
@@ -104,7 +105,7 @@ const profitScenarios = [
   { month: 'Дек', факт: null, базовый: 210000, оптимистичный: 260000, пессимистичный: 170000 },
 ];
 
-const balanceScenarios = [
+const generateBalanceScenarios = () => [
   { month: 'Янв', активы_факт: 4500000, активы_база: 4500000, активы_опт: 4500000, активы_песс: 4500000, 
     обязательства_факт: 1800000, обязательства_база: 1800000, обязательства_опт: 1800000, обязательства_песс: 1800000 },
   { month: 'Фев', активы_факт: 4600000, активы_база: 4600000, активы_опт: 4600000, активы_песс: 4600000, 
@@ -131,9 +132,7 @@ const balanceScenarios = [
     обязательства_факт: null, обязательства_база: 1690000, обязательства_опт: 1550000, обязательства_песс: 1850000 },
 ];
 
-// Существующие переменные и данные
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
-const cashDetails = [
+const generateCashDetails = () => [
   { category: 'Продажи товаров', amount: 450000, change: 5.2 },
   { category: 'Услуги', amount: 280000, change: 12.4 },
   { category: 'Комиссии', amount: 20000, change: -3.1 },
@@ -143,7 +142,8 @@ const cashDetails = [
   { category: 'Коммунальные услуги', amount: -40000, change: 2.1 },
   { category: 'Налоги', amount: -85000, change: 0 },
 ];
-const yearlyPlanningData = [
+
+const generateYearlyPlanningData = () => [
   { month: 'Янв', доходы: 500000, расходы: 430000, прогноз_доходы: 525000, прогноз_расходы: 440000 },
   { month: 'Фев', доходы: 650000, расходы: 520000, прогноз_доходы: 680000, прогноз_расходы: 530000 },
   { month: 'Мар', доходы: 620000, расходы: 610000, прогноз_доходы: 650000, прогноз_расходы: 615000 },
@@ -157,7 +157,8 @@ const yearlyPlanningData = [
   { month: 'Ноя', доходы: null, расходы: null, прогноз_доходы: 880000, прогноз_расходы: 680000 },
   { month: 'Дек', доходы: null, расходы: null, прогноз_доходы: 900000, прогноз_расходы: 690000 },
 ];
-const projectedBalanceData = [
+
+const generateProjectedBalanceData = () => [
   { month: 'Янв', активы: 4500000, обязательства: 1800000, капитал: 2700000 },
   { month: 'Фев', активы: 4600000, обязательства: 1790000, капитал: 2810000 },
   { month: 'Мар', активы: 4700000, обязательства: 1780000, капитал: 2920000 },
@@ -171,7 +172,8 @@ const projectedBalanceData = [
   { month: 'Ноя', активы: 5500000, обязательства: 1700000, капитал: 3800000 },
   { month: 'Дек', активы: 5600000, обязательства: 1690000, капитал: 3910000 },
 ];
-const projectedProfitData = [
+
+const generateProjectedProfitData = () => [
   { month: 'Янв', прибыль: 70000, прогноз: 85000 },
   { month: 'Фев', прибыль: 130000, прогноз: 150000 },
   { month: 'Мар', прибыль: 10000, прогноз: 35000 },
@@ -194,9 +196,41 @@ const Index: React.FC = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // States for all data that should be reset when new file is uploaded
+  const [sampleCashFlow, setSampleCashFlow] = useState(initialCashFlow);
+  const [sampleProfitLoss, setSampleProfitLoss] = useState(initialProfitLoss);
+  const [balanceSummary, setBalanceSummary] = useState(initialBalanceSummary);
+  const [cashFlowScenarios, setCashFlowScenarios] = useState(generateCashFlowScenarios());
+  const [profitScenarios, setProfitScenarios] = useState(generateProfitScenarios());
+  const [balanceScenarios, setBalanceScenarios] = useState(generateBalanceScenarios());
+  const [cashDetails, setCashDetails] = useState(generateCashDetails());
+  const [yearlyPlanningData, setYearlyPlanningData] = useState(generateYearlyPlanningData());
+  const [projectedBalanceData, setProjectedBalanceData] = useState(generateProjectedBalanceData());
+  const [projectedProfitData, setProjectedProfitData] = useState(generateProjectedProfitData());
+  const [dataTimestamp, setDataTimestamp] = useState<number>(Date.now());
+
+  // Function to reset all data
+  const resetAllData = () => {
+    setSampleCashFlow(initialCashFlow);
+    setSampleProfitLoss(initialProfitLoss);
+    setBalanceSummary(initialBalanceSummary);
+    setCashFlowScenarios(generateCashFlowScenarios());
+    setProfitScenarios(generateProfitScenarios());
+    setBalanceScenarios(generateBalanceScenarios());
+    setCashDetails(generateCashDetails());
+    setYearlyPlanningData(generateYearlyPlanningData());
+    setProjectedBalanceData(generateProjectedBalanceData());
+    setProjectedProfitData(generateProjectedProfitData());
+    setDataTimestamp(Date.now());
+  };
+
   const handleFileUploaded = (file: File) => {
+    // Reset all data when a new file is uploaded
+    resetAllData();
+    
     setIsAnalyzing(true);
     
+    // Simulate processing
     setTimeout(() => {
       setIsAnalyzing(false);
       setShowDashboard(true);
@@ -205,6 +239,12 @@ const Index: React.FC = () => {
         description: "Данные успешно загружены и проанализированы",
       });
     }, 3000);
+  };
+
+  // When user clicks "Upload new file" from dashboard
+  const handleNewFileRequest = () => {
+    setShowDashboard(false);
+    resetAllData();
   };
 
   const calculateTotal = (data: any[], key: string) => {
@@ -242,7 +282,7 @@ const Index: React.FC = () => {
                 {scenarioView === 'base' ? 'Показать сценарии' : 'Скрыть сценарии'}
               </Button>
             )}
-            <Button variant="outline" onClick={() => setShowDashboard(false)}>
+            <Button variant="outline" onClick={handleNewFileRequest}>
               Загрузить новый файл
             </Button>
           </div>
@@ -533,7 +573,7 @@ const Index: React.FC = () => {
                           label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                         >
                           {balanceSummary.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            <Cell key={`cell-${index}`} fill={["#0088FE", "#00C49F", "#FFBB28"][index % 3]} />
                           ))}
                         </Pie>
                         <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />

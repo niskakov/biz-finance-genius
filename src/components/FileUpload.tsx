@@ -21,6 +21,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Reset progress when component unmounts or a new file is uploaded
+  React.useEffect(() => {
+    return () => {
+      setUploadProgress(0);
+      setFile(null);
+    };
+  }, []);
+
   React.useEffect(() => {
     if (file && !isLoading) {
       const timer = setTimeout(() => {
@@ -81,6 +89,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       return;
     }
     
+    // Reset any previous data
+    setUploadProgress(0);
     setFile(selectedFile);
     setUploadProgress(10); // Start progress
   };
