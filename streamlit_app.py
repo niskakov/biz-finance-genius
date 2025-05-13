@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -286,7 +285,7 @@ def analyze_unit_economics(df):
     
     Средняя цена продукта составляет **{avg_price:.2f}**, при средней марже **{avg_margin_pct:.1f}%**.
     
-    Продукт с наибольшей маржинальностью - **{best_margin_product['Product']}** (**{best_margin_product['Margin %']:.1f}%**).
+    П��одукт с наибольшей маржинальностью - **{best_margin_product['Product']}** (**{best_margin_product['Margin %']:.1f}%**).
     Продукт с наименьшей маржинальностью - **{worst_margin_product['Product']}** (**{worst_margin_product['Margin %']:.1f}%**).
     
     Самый прибыльный продукт - **{best_profit_product['Product']}** с общей прибылью **{best_profit_product['Total Profit']:,.0f}**.
@@ -428,7 +427,7 @@ else:
         value=(datetime.now() - timedelta(days=365), datetime.now())
     )
     
-    currency = st.sidebar.selectbox("Валюта", ["RUB", "USD", "EUR"])
+    currency = st.sidebar.selectbox("Валюта", ["₸", "USD", "EUR"])
     
     # Data source: upload new or use saved
     st.sidebar.title("Источник данных")

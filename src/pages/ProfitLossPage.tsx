@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,7 +50,7 @@ const financialMetrics = [
   { name: "Рентабельность продаж", value: "20%", change: 2.5 },
   { name: "Валовая маржа", value: "46.7%", change: 1.2 },
   { name: "Операционная маржа", value: "24%", change: -0.8 },
-  { name: "Чистая прибыль", value: "₽150,000", change: 36.4 },
+  { name: "Чистая прибыль", value: "₸150,000", change: 36.4 },
 ];
 
 const ProfitLossPage: React.FC = () => {
@@ -173,7 +172,7 @@ const ProfitLossPage: React.FC = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                  <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
                   <Legend />
                   {selectedDataPoints.includes('выручка') && (
                     <Line
@@ -248,55 +247,55 @@ const ProfitLossPage: React.FC = () => {
                       <td className="py-3 px-4 font-medium">Выручка</td>
                       {filteredData.map((month, i) => (
                         <td key={i} className="text-right py-3 px-4">
-                          ₽{month.выручка.toLocaleString()}
+                          ₸{month.выручка.toLocaleString()}
                         </td>
                       ))}
                       <td className="text-right py-3 px-4 font-medium bg-muted/30">
-                        ₽{totals.revenue.toLocaleString()}
+                        ₸{totals.revenue.toLocaleString()}
                       </td>
                     </tr>
                     <tr className="border-b bg-muted/30">
                       <td className="py-3 px-4 font-medium">Себестоимость</td>
                       {filteredData.map((month, i) => (
                         <td key={i} className="text-right py-3 px-4 text-red-600">
-                          -₽{month.себестоимость.toLocaleString()}
+                          -₸{month.себестоимость.toLocaleString()}
                         </td>
                       ))}
                       <td className="text-right py-3 px-4 font-medium bg-muted/30 text-red-600">
-                        -₽{filteredData.reduce((sum, month) => sum + month.себестоимость, 0).toLocaleString()}
+                        -₸{filteredData.reduce((sum, month) => sum + month.себестоимость, 0).toLocaleString()}
                       </td>
                     </tr>
                     <tr className="border-b font-medium">
                       <td className="py-3 px-4">Валовая прибыль</td>
                       {filteredData.map((month, i) => (
                         <td key={i} className="text-right py-3 px-4 text-green-600">
-                          ₽{month.валовая_прибыль.toLocaleString()}
+                          ₸{month.валовая_прибыль.toLocaleString()}
                         </td>
                       ))}
                       <td className="text-right py-3 px-4 font-medium bg-muted/30 text-green-600">
-                        ₽{filteredData.reduce((sum, month) => sum + month.валовая_прибыль, 0).toLocaleString()}
+                        ₸{filteredData.reduce((sum, month) => sum + month.валовая_прибыль, 0).toLocaleString()}
                       </td>
                     </tr>
                     <tr className="border-b bg-muted/30">
                       <td className="py-3 px-4 font-medium">Операционные расходы</td>
                       {filteredData.map((month, i) => (
                         <td key={i} className="text-right py-3 px-4 text-red-600">
-                          -₽{month.расходы.toLocaleString()}
+                          -₸{month.расходы.toLocaleString()}
                         </td>
                       ))}
                       <td className="text-right py-3 px-4 font-medium bg-muted/30 text-red-600">
-                        -₽{filteredData.reduce((sum, month) => sum + month.расходы, 0).toLocaleString()}
+                        -₸{filteredData.reduce((sum, month) => sum + month.расходы, 0).toLocaleString()}
                       </td>
                     </tr>
                     <tr className="font-bold bg-primary/5">
                       <td className="py-3 px-4">Чистая прибыль</td>
                       {filteredData.map((month, i) => (
                         <td key={i} className="text-right py-3 px-4 text-primary">
-                          ₽{month.чистая_прибыль.toLocaleString()}
+                          ₸{month.чистая_прибыль.toLocaleString()}
                         </td>
                       ))}
                       <td className="text-right py-3 px-4 font-medium bg-muted/30 text-primary">
-                        ₽{totals.profit.toLocaleString()}
+                        ₸{totals.profit.toLocaleString()}
                       </td>
                     </tr>
                   </tbody>
@@ -330,7 +329,7 @@ const ProfitLossPage: React.FC = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -358,7 +357,7 @@ const ProfitLossPage: React.FC = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => `₽${value.toLocaleString()}`} />
+                <Tooltip formatter={(value) => `₸${value.toLocaleString()}`} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
