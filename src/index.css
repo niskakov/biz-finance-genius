@@ -33,7 +33,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221 83% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 221 83% 53%;
     --sidebar-foreground: 210 40% 98%;
@@ -90,35 +90,68 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
 /* Custom styles for financial app */
 .financial-chart {
-  @apply rounded-lg shadow-sm p-4 bg-white h-full;
+  @apply rounded-xl shadow-md p-6 bg-white h-full transition-all duration-200 hover:shadow-lg;
 }
 
 .dashboard-card {
-  @apply bg-white rounded-lg shadow-sm p-6 h-full;
+  @apply bg-white rounded-xl shadow-md p-6 h-full transition-all duration-200 hover:shadow-lg;
 }
 
 .dashboard-metric {
-  @apply text-2xl font-semibold mb-1;
+  @apply text-3xl font-semibold mb-2 font-display;
 }
 
 .dashboard-label {
-  @apply text-sm text-muted-foreground;
+  @apply text-sm text-muted-foreground font-medium uppercase tracking-wide;
 }
 
 .positive-value {
-  @apply text-green-600;
+  @apply text-green-600 font-medium;
 }
 
 .negative-value {
-  @apply text-red-600;
+  @apply text-red-600 font-medium;
 }
 
 .neutral-value {
-  @apply text-blue-600;
+  @apply text-blue-600 font-medium;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-xl;
+}
+
+.page-title {
+  @apply text-4xl font-display font-bold mb-6 bg-clip-text text-transparent bg-gradient-primary;
+}
+
+.page-subtitle {
+  @apply text-xl text-muted-foreground mb-8;
+}
+
+.card-gradient {
+  @apply bg-gradient-to-br from-white to-slate-50;
+}
+
+/* Animation utilities */
+.fade-in {
+  @apply animate-fade-in;
+}
+
+.slide-in {
+  @apply animate-slide-in;
+}
+
+/* Improved link style */
+.link-hover {
+  @apply relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-primary after:origin-bottom-right after:scale-x-0 hover:after:scale-x-100 hover:after:origin-bottom-left after:transition-transform after:duration-300;
 }
